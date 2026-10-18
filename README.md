@@ -53,6 +53,20 @@ node D:/dsh/config/codex-usage-bridge/verify-offline.mjs
 
 原文件备份在插件目录下的 `lib/index.js.bak-codex-bridge`，回滚就是拷回去。
 
+## 实测对账（2026-10-19）
+
+面板 `/api/billing/usage-stats` 的 `byDayModels[日期]["gpt-6.1-sol"]` 与离线脚本逐日核对：
+
+| 日期 | 离线脚本（Codex 侧） | 面板 gpt-6.1-sol | 说明 |
+|---|---|---|---|
+| 2026-10-17 | ¥49.31 | ¥95.26 | 面板还含当天 175 次 DSH 内测试调用（约 ¥45.96） |
+| 2026-10-18 | ¥27.82 | ¥27.82 | 一致（27.81867421） |
+| 2026-10-19 | ¥2.73 | ¥2.24 | 面板快照早于脚本，差的是脚本重跑前新增的那次会话 |
+
+`cacheWrite` 必须按 input 单价计入：面板口径是
+`input = cacheRead + inputTokens + cacheWrite`，即 `cacheMiss = (input - cached) + cacheWrite`。
+漏掉它会让离线值比面板低约 3%（本次差 ¥2.26，全部来自 `cache_write_input_tokens`）。
+
 ## 升级插件后
 
 插件升级会覆盖 `lib/index.js`，补丁随之丢失。升级后重跑一次

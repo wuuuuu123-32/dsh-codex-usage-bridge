@@ -1,6 +1,6 @@
 {
   "name": "dsh-codex-usage-bridge",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "把 Codex CLI 的 token 用量并入 DSH 的 usage-billing 计费面板",
   "type": "module",
   "private": true,

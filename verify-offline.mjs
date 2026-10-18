@@ -75,7 +75,9 @@ let grand = 0;
 for (const [key, cell] of [...byDayModel].sort()) {
   const [day, model, provider] = key.split("|");
   const price = PRICE[model];
-  const miss = cell.input - cell.cached;
+  // 面板口径：input = cacheRead + inputTokens + cacheWrite，即 cacheWrite 也按
+  // input 单价计入「未命中」那部分。漏掉 cw 会让离线值比面板低约 3%。
+  const miss = cell.input - cell.cached + cell.cacheWrite;
   const usd = price ? (miss / 1e6) * price.input + (cell.cached / 1e6) * price.cacheHit + (cell.output / 1e6) * price.output : 0;
   grand += usd * USD_CNY;
   console.log(
